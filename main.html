@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Aegis — GRC Control Surface · FormyX</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#09090B; --bg-2:#101013; --bg-3:#17171B; --bg-hover:#1C1C21;
+    --line:#222226; --line-2:#2C2C32; --line-faint:#1A1A1E;
+    --text:#F4F4F6; --text-2:#9A9AA3; --text-3:#5E5E66;
+    --crit:#E5484D; --high:#E08A3C; --med:#D8C24A; --low:#36C28E;
+    --crit-dim:#3A1416; --high-dim:#33220F; --med-dim:#2E2A10; --low-dim:#0E2A20;
+    --r:12px;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;background:var(--bg)}
+  body{
+    color:var(--text); font-family:Inter,system-ui,sans-serif; font-size:14px; line-height:1.5;
+    -webkit-font-smoothing:antialiased;
+    background:
+      radial-gradient(1100px 480px at 50% -160px, rgba(255,255,255,.045), transparent 70%),
+      var(--bg);
+    min-height:100vh;
+  }
+  .mono{font-family:"JetBrains Mono",ui-monospace,monospace;font-variant-numeric:tabular-nums}
+  .num{font-variant-numeric:tabular-nums}
+  button{font-family:inherit;cursor:pointer;color:inherit}
+  ::selection{background:#2A2A30}
+  :focus-visible{outline:1.5px solid #fff;outline-offset:2px;border-radius:5px}
+  a{color:inherit}
+
+  .app{max-width:1180px;margin:0 auto;padding:26px 26px 56px}
+
+  /* ---- topbar ---- */
+  .top{display:flex;align-items:center;gap:20px;flex-wrap:wrap;margin-bottom:30px}
+  .brand{display:flex;align-items:center;gap:12px}
+  .mark{width:30px;height:30px;border:1px solid var(--line-2);border-radius:8px;display:grid;place-items:center;
+    background:linear-gradient(160deg,#161619,#0D0D10);position:relative}
+  .mark::before{content:"";width:12px;height:14px;border:1.6px solid var(--text);border-bottom:none;
+    border-radius:7px 7px 2px 2px;box-shadow:inset 0 -3px 0 -1px var(--text)}
+  .brand .nm{font-weight:700;font-size:17px;letter-spacing:-.02em}
+  .brand .tag{font-family:"JetBrains Mono",monospace;font-size:10.5px;color:var(--text-3);letter-spacing:.04em;margin-top:1px}
+  .top .spacer{flex:1}
+
+  .seg{display:flex;background:var(--bg-2);border:1px solid var(--line);border-radius:10px;padding:3px}
+  .seg button{border:0;background:transparent;color:var(--text-2);font-size:12.5px;font-weight:500;
+    padding:7px 13px;border-radius:7px;white-space:nowrap;transition:.15s}
+  .seg button:hover{color:var(--text)}
+  .seg button[aria-pressed="true"]{background:var(--bg-hover);color:var(--text);font-weight:600;
+    box-shadow:0 0 0 1px var(--line-2)}
+
+  .search{display:flex;align-items:center;gap:8px;background:var(--bg-2);border:1px solid var(--line);
+    border-radius:10px;padding:8px 12px;width:188px}
+  .search input{border:0;outline:0;background:transparent;color:var(--text);font-size:13px;width:100%;font-family:inherit}
+  .search input::placeholder{color:var(--text-3)}
+
+  /* ---- pillar bar ---- */
+  .pillars{display:flex;align-items:center;gap:8px;margin-bottom:26px;flex-wrap:wrap}
+  .pill{border:1px solid var(--line);background:transparent;color:var(--text-2);font-size:13px;font-weight:500;
+    padding:8px 15px;border-radius:999px;display:inline-flex;align-items:center;gap:8px;transition:.15s}
+  .pill:hover{border-color:var(--line-2);color:var(--text)}
+  .pill[aria-pressed="true"]{background:var(--text);color:var(--bg);border-color:var(--text);font-weight:600}
+  .pill .ct{font-family:"JetBrains Mono",monospace;font-size:11px;opacity:.7}
+  .pill .dot{width:6px;height:6px;border-radius:50%}
+  .pillars .sepr{flex:1}
+  .pillars .v2{font-family:"JetBrains Mono",monospace;font-size:11px;color:var(--text-3);
+    border:1px dashed var(--line-2);border-radius:999px;padding:6px 12px}
+
+  /* ---- KPI telemetry ---- */
+  .tele{display:grid;grid-template-columns:repeat(4,1fr);border:1px solid var(--line);border-radius:var(--r);
+    background:var(--bg-2);overflow:hidden;margin-bottom:22px}
+  .tele .cell{padding:18px 20px;border-right:1px solid var(--line)}
+  .tele .cell:last-child{border-right:0}
+  .tele .l{font-size:11px;color:var(--text-2);font-weight:500;letter-spacing:.01em;display:flex;align-items:center;gap:7px}
+  .tele .l::before{content:"";width:5px;height:5px;border-radius:50%;background:var(--text-3)}
+  .tele .v{font-family:"JetBrains Mono",monospace;font-weight:600;font-size:30px;letter-spacing:-.02em;margin-top:10px;line-height:1}
+  .tele .s{font-size:11.5px;color:var(--text-3);margin-top:7px}
+  .tele .s .up{color:var(--crit)} .tele .s .dn{color:var(--low)}
+
+  /* ---- panels ---- */
+  .row{display:grid;grid-template-columns:286px 1fr;gap:18px;margin-bottom:18px}
+  .panel{border:1px solid var(--line);border-radius:var(--r);background:var(--bg-2)}
+  .panel .ph{display:flex;align-items:center;justify-content:space-between;padding:15px 18px;border-bottom:1px solid var(--line)}
+  .panel .ph h3{margin:0;font-size:13px;font-weight:600;letter-spacing:-.01em}
+  .panel .ph .hint{font-family:"JetBrains Mono",monospace;font-size:10.5px;color:var(--text-3)}
+  .panel .pb{padding:18px}
+
+  /* heatmap */
+  .heat{display:grid;grid-template-columns:14px repeat(5,1fr);grid-auto-rows:1fr;gap:5px}
+  .heat .ay{grid-row:1 / span 5;writing-mode:vertical-rl;transform:rotate(180deg);
+    font-family:"JetBrains Mono",monospace;font-size:9px;color:var(--text-3);text-align:center;align-self:center;letter-spacing:.1em}
+  .heat .cell{aspect-ratio:1/.8;border-radius:7px;display:grid;place-items:center;
+    font-family:"JetBrains Mono",monospace;font-weight:600;font-size:13px;transition:.14s;border:1px solid transparent}
+  .heat .cell:not(.e){cursor:pointer;color:var(--text)}
+  .heat .cell:not(.e):hover{transform:translateY(-1px)}
+  .heat .cell.sel{outline:1.5px solid var(--text);outline-offset:1.5px}
+  .heat .z-low{background:var(--low-dim);border-color:rgba(54,194,142,.35)}
+  .heat .z-med{background:var(--med-dim);border-color:rgba(216,194,74,.32)}
+  .heat .z-high{background:var(--high-dim);border-color:rgba(224,138,60,.35)}
+  .heat .z-crit{background:var(--crit-dim);border-color:rgba(229,72,77,.4)}
+  .heat .e{background:var(--bg-3);border-color:var(--line-faint);color:var(--text-3)}
+  .ax-x{font-family:"JetBrains Mono",monospace;font-size:9px;color:var(--text-3);letter-spacing:.1em;
+    text-align:center;margin:8px 0 0 14px}
+  .hleg{display:flex;gap:13px;margin-top:13px;font-size:11px;color:var(--text-2);flex-wrap:wrap}
+  .hleg span{display:flex;align-items:center;gap:6px}
+  .hleg i{width:8px;height:8px;border-radius:2px}
+
+  /* AI */
+  .ai .badge{font-family:"JetBrains Mono",monospace;font-size:10px;color:var(--text-2);border:1px solid var(--line-2);
+    border-radius:999px;padding:3px 9px;letter-spacing:.03em}
+  .ai .sum{font-size:13.5px;line-height:1.62;color:var(--text-2)}
+  .ai .sum b{color:var(--text);font-weight:600}
+  .ai .acts{display:flex;gap:9px;margin-top:16px}
+  .btn{border:1px solid var(--line-2);background:transparent;color:var(--text);font-size:12.5px;font-weight:600;
+    padding:9px 14px;border-radius:9px;display:inline-flex;align-items:center;gap:8px;transition:.14s}
+  .btn:hover{background:var(--bg-3);border-color:#3A3A42}
+  .btn.pri{background:var(--text);color:var(--bg);border-color:var(--text)}
+  .btn.pri:hover{background:#fff}
+  .ai .disc{display:flex;align-items:center;gap:8px;font-size:11px;color:var(--text-3);margin-top:14px;
+    border-top:1px solid var(--line);padding-top:13px}
+
+  /* ---- register ---- */
+  .reg{border:1px solid var(--line);border-radius:var(--r);background:var(--bg-2);overflow:hidden}
+  .reg .rh{display:flex;align-items:center;justify-content:space-between;padding:16px 18px;border-bottom:1px solid var(--line);flex-wrap:wrap;gap:10px}
+  .reg .rh h3{margin:0;font-size:13.5px;font-weight:600;letter-spacing:-.01em}
+  .reg .rh h3 span{color:var(--text-3);font-weight:400}
+  .chips{display:flex;gap:7px;align-items:center;flex-wrap:wrap}
+  .chip{display:inline-flex;align-items:center;gap:7px;border:1px solid var(--line-2);color:var(--text-2);
+    font-family:"JetBrains Mono",monospace;font-size:11px;padding:4px 10px;border-radius:999px}
+  .chip button{border:0;background:transparent;color:var(--text-3);font-size:13px;line-height:1;padding:0}
+  .chip button:hover{color:var(--crit)}
+  .chips .cnt{font-family:"JetBrains Mono",monospace;font-size:11.5px;color:var(--text-3)}
+  table{width:100%;border-collapse:collapse}
+  thead th{font-family:"JetBrains Mono",monospace;font-size:10px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;
+    color:var(--text-3);text-align:left;padding:11px 18px;border-bottom:1px solid var(--line)}
+  thead th.r{text-align:right}
+  tbody tr{border-bottom:1px solid var(--line-faint);cursor:pointer;transition:background .1s}
+  tbody tr:last-child{border-bottom:0}
+  tbody tr:hover{background:var(--bg-hover)}
+  tbody td{padding:13px 18px;vertical-align:middle}
+  .t-id{font-family:"JetBrains Mono",monospace;font-size:12px;color:var(--text-3)}
+  .t-title{font-weight:500;color:var(--text);max-width:340px;font-size:13.5px}
+  .t-title .u{display:block;font-size:11px;color:var(--text-3);font-weight:400;margin-top:2px;font-family:"JetBrains Mono",monospace;letter-spacing:.01em}
+  .ttag{display:inline-flex;align-items:center;gap:7px;font-family:"JetBrains Mono",monospace;font-size:11px;color:var(--text-2)}
+  .ttag .d{width:6px;height:6px;border-radius:50%}
+  .d-Risk{background:#5B8DEF}.d-Finding{background:#A879EF}.d-Compliance{background:var(--low)}
+  .sev{display:inline-flex;align-items:center;gap:9px;font-family:"JetBrains Mono",monospace;font-weight:600;font-size:12.5px}
+  .sev .bar{width:34px;height:5px;border-radius:3px;background:var(--bg-3);overflow:hidden;border:1px solid var(--line-faint)}
+  .sev .fill{height:100%;display:block;border-radius:3px}
+  .sev-crit{color:var(--crit)} .sev-crit .fill{background:var(--crit)}
+  .sev-high{color:var(--high)} .sev-high .fill{background:var(--high)}
+  .sev-med{color:var(--med)} .sev-med .fill{background:var(--med)}
+  .sev-low{color:var(--low)} .sev-low .fill{background:var(--low)}
+  .st{font-size:11.5px;font-weight:500;padding:4px 10px;border-radius:999px;white-space:nowrap;border:1px solid var(--line-2);color:var(--text-2)}
+  .st-Open{border-color:rgba(229,72,77,.3);color:#F0888B}
+  .st-InProgress{border-color:rgba(224,138,60,.3);color:#EBA869}
+  .st-Review{border-color:rgba(91,141,239,.3);color:#86A9F2}
+  .st-Mitigated{border-color:rgba(54,194,142,.3);color:#5CD3A8}
+  .st-Closed{border-color:var(--line-2);color:var(--text-3)}
+  .due{font-family:"JetBrains Mono",monospace;font-size:12.5px;color:var(--text-2)}
+  .due.over{color:var(--crit);font-weight:600}
+  .due .od{display:block;font-size:9px;letter-spacing:.06em}
+  .empty td{text-align:center;color:var(--text-3);padding:40px;font-size:13px}
+
+  .foot{margin-top:18px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;
+    font-family:"JetBrains Mono",monospace;font-size:11px;color:var(--text-3);padding-top:4px}
+  .foot b{color:var(--text-2);font-weight:500}
+
+  /* ---- drawer ---- */
+  .scrim{position:fixed;inset:0;background:rgba(0,0,0,.6);backdrop-filter:blur(2px);opacity:0;pointer-events:none;transition:.2s;z-index:40}
+  .scrim.on{opacity:1;pointer-events:auto}
+  .drawer{position:fixed;top:0;right:0;height:100%;width:min(470px,95vw);background:var(--bg-2);
+    border-left:1px solid var(--line-2);transform:translateX(100%);transition:.26s cubic-bezier(.4,0,.2,1);z-index:41;
+    display:flex;flex-direction:column}
+  .drawer.on{transform:translateX(0)}
+  .dh{padding:20px 22px 16px;border-bottom:1px solid var(--line)}
+  .dh .tp{display:flex;align-items:center;justify-content:space-between}
+  .dh .x{border:0;background:transparent;color:var(--text-3);font-size:18px;padding:3px 7px;border-radius:7px}
+  .dh .x:hover{background:var(--bg-3);color:var(--text)}
+  .dh h2{margin:12px 0 4px;font-size:17px;font-weight:600;letter-spacing:-.02em;line-height:1.3}
+  .dh .sb{font-family:"JetBrains Mono",monospace;font-size:11.5px;color:var(--text-3)}
+  .db{padding:20px 22px;overflow:auto;flex:1}
+  .step{display:flex;align-items:flex-start;margin:2px 0 22px}
+  .stp{flex:1;display:flex;flex-direction:column;align-items:center;gap:7px;position:relative}
+  .stp .p{width:15px;height:15px;border-radius:50%;background:var(--bg-2);border:1.5px solid var(--line-2);z-index:2}
+  .stp.done .p{background:var(--text);border-color:var(--text)}
+  .stp.cur .p{border-color:var(--text);box-shadow:0 0 0 4px rgba(255,255,255,.1)}
+  .stp.cur .p::after{content:"";position:absolute;top:4.5px;width:6px;height:6px;border-radius:50%;background:var(--text)}
+  .stp .n{font-family:"JetBrains Mono",monospace;font-size:8.5px;color:var(--text-3);letter-spacing:.04em;text-transform:uppercase}
+  .stp.cur .n{color:var(--text)}.stp.done .n{color:var(--text-2)}
+  .stp::before{content:"";position:absolute;top:7px;left:-50%;width:100%;height:1.5px;background:var(--line-2);z-index:1}
+  .stp:first-child::before{display:none}
+  .stp.done::before,.stp.cur::before{background:var(--text)}
+  .fld{display:grid;grid-template-columns:130px 1fr;gap:10px;padding:11px 0;border-bottom:1px solid var(--line-faint);font-size:13px}
+  .fld .k{color:var(--text-3);font-size:12px}
+  .fld .v{color:var(--text);font-weight:500}
+  .fld .v.mono{font-family:"JetBrains Mono",monospace;font-weight:600}
+  .dai{margin-top:20px;border:1px solid var(--line-2);border-radius:11px;padding:16px;background:var(--bg-3)}
+  .dai .t{display:flex;align-items:center;justify-content:space-between;margin-bottom:11px}
+  .dai .t b{font-size:12.5px}
+  .dai textarea{width:100%;border:1px solid var(--line-2);border-radius:9px;padding:11px;font-family:"JetBrains Mono",monospace;
+    font-size:12px;color:var(--text-2);line-height:1.55;resize:vertical;min-height:80px;background:var(--bg);outline:0}
+  .dai textarea::placeholder{color:var(--text-3)}
+  .dai .nt{font-size:10.5px;color:var(--text-3);margin-top:10px;line-height:1.5}
+
+  @media (max-width:880px){
+    .row{grid-template-columns:1fr}.tele{grid-template-columns:repeat(2,1fr)}
+    .tele .cell:nth-child(2){border-right:0}.tele .cell:nth-child(1),.tele .cell:nth-child(2){border-bottom:1px solid var(--line)}
+    .seg button{padding:7px 10px}
+  }
+  @media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<div class="app">
+
+  <header class="top">
+    <div class="brand">
+      <div class="mark" aria-hidden="true"></div>
+      <div>
+        <div class="nm">Aegis</div>
+        <div class="tag">FORMYX // GRC CONTROL SURFACE</div>
+      </div>
+    </div>
+    <div class="spacer"></div>
+    <div class="seg" role="group" aria-label="Role">
+      <button data-role="board" aria-pressed="true">Board</button>
+      <button data-role="audit_committee" aria-pressed="false">Committee</button>
+      <button data-role="risk_manager" aria-pressed="false">Risk</button>
+      <button data-role="auditor" aria-pressed="false">Auditor</button>
+    </div>
+    <div class="search">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#5E5E66" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+      <input id="search" type="text" placeholder="Search…" aria-label="Search register">
+    </div>
+  </header>
+
+  <nav class="pillars" aria-label="Pillars">
+    <button class="pill" data-type="all" aria-pressed="true">All items <span class="ct" id="c-all"></span></button>
+    <button class="pill" data-type="Risk" aria-pressed="false"><span class="dot d-Risk"></span>Risks <span class="ct" id="c-Risk"></span></button>
+    <button class="pill" data-type="Finding" aria-pressed="false"><span class="dot d-Finding"></span>Findings <span class="ct" id="c-Finding"></span></button>
+    <button class="pill" data-type="Compliance" aria-pressed="false"><span class="dot d-Compliance"></span>Compliance <span class="ct" id="c-Compliance"></span></button>
+    <span class="sepr"></span>
+    <span class="v2">Governance · v2</span>
+    <span class="v2">Predictive AI · v2</span>
+  </nav>
+
+  <section class="tele" id="tele" aria-label="Indicators"></section>
+
+  <div class="row">
+    <div class="panel">
+      <div class="ph"><h3>Exposure matrix</h3><span class="hint">tap to filter</span></div>
+      <div class="pb">
+        <div class="heat" id="heat" role="group" aria-label="Likelihood by impact"></div>
+        <div class="ax-x">LIKELIHOOD →</div>
+        <div class="hleg">
+          <span><i style="background:var(--low)"></i>Low</span>
+          <span><i style="background:var(--med)"></i>Med</span>
+          <span><i style="background:var(--high)"></i>High</span>
+          <span><i style="background:var(--crit)"></i>Critical</span>
+        </div>
+      </div>
+    </div>
+    <div class="panel ai">
+      <div class="ph"><h3>AI exposure summary</h3><span class="badge">V1 · DRAFTING</span></div>
+      <div class="pb">
+        <p class="sum" id="aiSum"></p>
+        <div class="acts">
+          <button class="btn pri" id="aiRegen">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12a9 9 0 1 1 3 6.7"/><path d="M3 21v-6h6"/></svg>Regenerate
+          </button>
+          <button class="btn" id="aiCopy">Copy for board pack</button>
+        </div>
+        <div class="disc">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#5E5E66" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8h.01M11 12h1v4h1"/></svg>
+          Drafted from live register data — review before circulating.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <section class="reg">
+    <div class="rh">
+      <h3>Unified register <span>— one record, every pillar</span></h3>
+      <div class="chips" id="chips"></div>
+    </div>
+    <div style="overflow:auto">
+      <table>
+        <thead><tr>
+          <th style="width:80px">ID</th><th>Item</th><th style="width:118px">Type</th>
+          <th style="width:96px">Owner</th><th style="width:124px">Severity</th>
+          <th style="width:108px">Status</th><th style="width:92px" class="r">Due</th>
+        </tr></thead>
+        <tbody id="rows"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <div class="foot">
+    <span>FormyX // Aegis — <b>v1 scope prototype</b></span>
+    <span>Lifecycle: <b>Capture → Assess → Assign → Remediate → Review → Close</b></span>
+  </div>
+</div>
+
+<div class="scrim" id="scrim"></div>
+<aside class="drawer" id="drawer" aria-label="Item detail" aria-hidden="true">
+  <div class="dh">
+    <div class="tp"><span class="ttag" id="drType"></span><button class="x" id="drClose" aria-label="Close">✕</button></div>
+    <h2 id="drTitle"></h2>
+    <div class="sb" id="drSub"></div>
+  </div>
+  <div class="db">
+    <div class="step" id="drStep"></div>
+    <div id="drFields"></div>
+    <div class="dai">
+      <div class="t"><b>AI assist</b></div>
+      <textarea id="drAiText" placeholder="Draft a board-ready summary of this item…" readonly></textarea>
+      <div class="acts" style="margin-top:11px">
+        <button class="btn pri" id="drAiBtn">Draft summary</button>
+        <button class="btn" id="drAiCat">Suggest category</button>
+      </div>
+      <div class="nt">v1 AI = drafting &amp; classification (no historical data needed). Predictive analytics ships in v2.</div>
+    </div>
+  </div>
+</aside>
+
+<script>
+const ITEMS=[
+ {id:"RSK-0042",type:"Risk",title:"Third-party vendor data access not periodically reviewed",unit:"IT & Vendor Mgmt",owner:"P. Nair",cat:"Operational",l:4,i:5,status:"Open",stage:1,due:"2026-05-30",controls:"Quarterly access recertification (not yet implemented)"},
+ {id:"RSK-0051",type:"Risk",title:"Revenue recognition control gap on multi-year contracts",unit:"Finance",owner:"S. Mehta",cat:"Financial",l:3,i:5,status:"InProgress",stage:3,due:"2026-07-15",controls:"Contract review checklist; CFO sign-off"},
+ {id:"RSK-0063",type:"Risk",title:"AML transaction-monitoring alert backlog exceeds SLA",unit:"Compliance Ops",owner:"R. Iyer",cat:"Regulatory",l:4,i:4,status:"InProgress",stage:3,due:"2026-06-20",controls:"Daily alert triage; escalation matrix"},
+ {id:"FND-0118",type:"Finding",title:"Privileged user activity logs not retained for required period",unit:"IT Security",owner:"A. Khan",cat:"Operational",l:3,i:4,status:"Review",stage:5,due:"2026-07-02",controls:"SIEM retention policy update"},
+ {id:"FND-0122",type:"Finding",title:"Segregation-of-duties conflict in procurement approvals",unit:"Procurement",owner:"D. Rao",cat:"Operational",l:3,i:3,status:"Open",stage:4,due:"2026-06-12",controls:"Role redesign; dual-approval workflow"},
+ {id:"CMP-0207",type:"Compliance",title:"ISO 27001 Annex A controls mapping incomplete",unit:"InfoSec",owner:"A. Khan",cat:"Compliance",l:2,i:4,status:"InProgress",stage:2,due:"2026-08-01",controls:"Control library mapping in progress"},
+ {id:"CMP-0211",type:"Compliance",title:"Data-protection consent records missing for legacy users",unit:"Legal",owner:"M. Pillai",cat:"Regulatory",l:3,i:4,status:"Open",stage:1,due:"2026-06-08",controls:"Consent re-capture campaign (planned)"},
+ {id:"RSK-0070",type:"Risk",title:"Single-point dependency on legacy core module",unit:"Technology",owner:"V. Sharma",cat:"Strategic",l:2,i:5,status:"Open",stage:2,due:"2026-09-30",controls:"Resilience roadmap; vendor SLA review"},
+ {id:"FND-0130",type:"Finding",title:"Expense reimbursement evidence not consistently attached",unit:"Finance",owner:"S. Mehta",cat:"Operational",l:2,i:2,status:"Mitigated",stage:6,due:"2026-05-15",controls:"Mandatory receipt upload control live"},
+ {id:"CMP-0219",type:"Compliance",title:"SOX key-control narratives outdated for FY26",unit:"Internal Audit",owner:"R. Iyer",cat:"Compliance",l:3,i:3,status:"InProgress",stage:3,due:"2026-07-22",controls:"Walkthrough refresh underway"},
+ {id:"RSK-0081",type:"Risk",title:"Climate-transition exposure in lending portfolio unquantified",unit:"Risk",owner:"R. Iyer",cat:"Strategic",l:2,i:3,status:"Open",stage:1,due:"2026-10-10",controls:"ESG scenario model (scoping)"},
+ {id:"FND-0141",type:"Finding",title:"Terminated employees retained system access beyond exit date",unit:"HR / IT",owner:"P. Nair",cat:"Operational",l:4,i:4,status:"Open",stage:4,due:"2026-06-18",controls:"Automated deprovisioning trigger"},
+ {id:"CMP-0224",type:"Compliance",title:"Outsourcing arrangements not registered per regulator guidance",unit:"Compliance",owner:"M. Pillai",cat:"Regulatory",l:3,i:4,status:"Review",stage:5,due:"2026-07-05",controls:"Outsourcing register + filing"},
+ {id:"RSK-0090",type:"Risk",title:"Phishing susceptibility above industry benchmark",unit:"IT Security",owner:"A. Khan",cat:"Operational",l:4,i:3,status:"InProgress",stage:3,due:"2026-07-28",controls:"Awareness training; simulated campaigns"},
+ {id:"FND-0149",type:"Finding",title:"Bank reconciliations not reviewed by independent preparer",unit:"Finance",owner:"S. Mehta",cat:"Financial",l:2,i:3,status:"Closed",stage:6,due:"2026-04-30",controls:"Independent review control embedded"},
+];
+const STAGES=["Capture","Assess","Assign","Remediate","Review","Close"];
+const TODAY=new Date("2026-06-26");
+const sevOf=s=>s>=15?"crit":s>=10?"high":s>=5?"med":"low";
+const sevLabel=s=>({crit:"Critical",high:"High",med:"Medium",low:"Low"})[s];
+ITEMS.forEach(it=>{it.score=it.l*it.i;it.sev=sevOf(it.score);});
+const cnt=(a,f)=>a.filter(f).length;
+const overdue=x=>x.status!=="Closed"&&x.status!=="Mitigated"&&new Date(x.due)<TODAY;
+const entIndex=a=>{const o=a.filter(x=>x.status!=="Closed");return o.length?Math.round(o.reduce((s,x)=>s+x.score,0)/o.length*4):0;};
+
+const ROLES={
+ board:{label:"Board of Directors",type:"all",kpis:i=>[
+   {l:"Enterprise risk index",v:entIndex(i),s:'<span class="up">▲ 4</span> vs last quarter'},
+   {l:"Critical exposures",v:cnt(i,x=>x.sev==="crit"),s:"open at board level"},
+   {l:"Audit plan complete",v:"72%",s:'<span class="dn">▲ 9%</span> YTD'},
+   {l:"Compliance posture",v:"86%",s:"obligations on track"}]},
+ audit_committee:{label:"Audit Committee",type:"Finding",kpis:i=>[
+   {l:"Open findings",v:cnt(i,x=>x.type==="Finding"&&x.status!=="Closed"),s:"across engagements"},
+   {l:"High / critical",v:cnt(i,x=>x.type==="Finding"&&(x.sev==="crit"||x.sev==="high")),s:"need response"},
+   {l:"Overdue remediation",v:cnt(i,x=>overdue(x)),s:"past target date"},
+   {l:"Audit plan complete",v:"72%",s:"of FY26 plan"}]},
+ risk_manager:{label:"Risk Manager",type:"Risk",kpis:i=>[
+   {l:"Risks in register",v:cnt(i,x=>x.type==="Risk"),s:"under management"},
+   {l:"Critical / high",v:cnt(i,x=>x.type==="Risk"&&(x.sev==="crit"||x.sev==="high")),s:"by residual rating"},
+   {l:"Overdue mitigations",v:cnt(i,x=>x.type==="Risk"&&overdue(x)),s:"action required"},
+   {l:"KRIs breached",v:"3",s:"of 11 monitored"}]},
+ auditor:{label:"Internal Auditor",type:"Finding",kpis:i=>[
+   {l:"My findings",v:cnt(i,x=>x.type==="Finding"),s:"assigned to me"},
+   {l:"In fieldwork",v:cnt(i,x=>x.type==="Finding"&&x.stage<=4&&x.status!=="Closed"),s:"active workpapers"},
+   {l:"Awaiting review",v:cnt(i,x=>x.type==="Finding"&&x.stage===5),s:"reviewer sign-off"},
+   {l:"Evidence complete",v:"91%",s:"of tested controls"}]},
+};
+
+let state={role:"board",type:"all",cell:null,search:"",aiIdx:0};
+const $=s=>document.querySelector(s);
+
+function visible(){
+  return ITEMS.filter(it=>{
+    if(state.type!=="all"&&it.type!==state.type)return false;
+    if(state.cell&&(it.l!==state.cell.l||it.i!==state.cell.i))return false;
+    if(state.search){const q=state.search.toLowerCase();
+      if(!(it.title.toLowerCase().includes(q)||it.id.toLowerCase().includes(q)||it.owner.toLowerCase().includes(q)))return false;}
+    return true;
+  }).sort((a,b)=>b.score-a.score);
+}
+function render(){
+  const r=ROLES[state.role];
+  $("#tele").innerHTML=r.kpis(ITEMS).map(k=>`<div class="cell"><div class="l">${k.l}</div><div class="v">${k.v}</div><div class="s">${k.s}</div></div>`).join("");
+  $("#c-all").textContent=ITEMS.length;
+  ["Risk","Finding","Compliance"].forEach(t=>$("#c-"+t).textContent=ITEMS.filter(x=>x.type===t).length);
+  document.querySelectorAll(".pill[data-type]").forEach(b=>b.setAttribute("aria-pressed",b.dataset.type===state.type));
+  renderHeat();renderRows();renderChips();renderAI();
+}
+function renderHeat(){
+  let h=`<div class="ay">IMPACT →</div>`;
+  for(let i=5;i>=1;i--)for(let l=1;l<=5;l++){
+    const c=ITEMS.filter(x=>x.l===l&&x.i===i&&x.status!=="Closed").length;
+    const z=sevOf(l*i), sel=state.cell&&state.cell.l===l&&state.cell.i===i?"sel":"", e=c===0?"e":"";
+    h+=`<button class="cell z-${z} ${e} ${sel}" data-l="${l}" data-i="${i}" ${e?'tabindex="-1"':''} aria-label="L${l} I${i}, ${c} items">${c||""}</button>`;
+  }
+  $("#heat").innerHTML=h;
+  $("#heat").querySelectorAll(".cell:not(.e)").forEach(c=>c.onclick=()=>{
+    const l=+c.dataset.l,i=+c.dataset.i;
+    state.cell=(state.cell&&state.cell.l===l&&state.cell.i===i)?null:{l,i};render();
+  });
+}
+function renderRows(){
+  const rows=visible();
+  if(!rows.length){$("#rows").innerHTML=`<tr class="empty"><td colspan="7">No items match. Clear a filter to see more.</td></tr>`;return;}
+  $("#rows").innerHTML=rows.map(it=>{
+    const od=overdue(it), w={crit:100,high:74,med:48,low:26}[it.sev], st=it.status==="InProgress"?"InProgress":it.status;
+    return `<tr data-id="${it.id}" tabindex="0">
+      <td class="t-id">${it.id}</td>
+      <td class="t-title">${it.title}<span class="u">${it.unit} · ${it.cat}</span></td>
+      <td><span class="ttag"><span class="d d-${it.type}"></span>${it.type}</span></td>
+      <td style="font-size:13px">${it.owner}</td>
+      <td><span class="sev sev-${it.sev}"><span class="bar"><span class="fill" style="width:${w}%"></span></span>${it.score}</span></td>
+      <td><span class="st st-${st}">${it.status==="InProgress"?"In progress":it.status}</span></td>
+      <td class="r"><span class="due ${od?'over':''}">${fmtDue(it.due)}${od?'<span class="od">OVERDUE</span>':''}</span></td>
+    </tr>`;
+  }).join("");
+  $("#rows").querySelectorAll("tr[data-id]").forEach(tr=>{
+    const open=()=>openDrawer(tr.dataset.id);
+    tr.onclick=open;tr.onkeydown=e=>{if(e.key==="Enter"){e.preventDefault();open();}};
+  });
+}
+const fmtDue=d=>new Date(d).toLocaleDateString("en-GB",{day:"2-digit",month:"short"}).toUpperCase();
+function renderChips(){
+  const c=[];
+  if(state.type!=="all")c.push({k:state.type,clr:()=>state.type="all"});
+  if(state.cell)c.push({k:`L${state.cell.l}×I${state.cell.i}`,clr:()=>state.cell=null});
+  if(state.search)c.push({k:`"${state.search}"`,clr:()=>{state.search="";$("#search").value="";}});
+  const el=$("#chips");
+  if(!c.length){el.innerHTML=`<span class="cnt">${visible().length} items</span>`;return;}
+  el.innerHTML=c.map((x,i)=>`<span class="chip">${x.k}<button data-i="${i}" aria-label="Remove">✕</button></span>`).join("")+`<span class="cnt">${visible().length} items</span>`;
+  el.querySelectorAll(".chip button").forEach((b,i)=>b.onclick=()=>{c[i].clr();render();});
+}
+function renderAI(){
+  const a=visible(),crit=a.filter(x=>x.sev==="crit").length,over=a.filter(x=>overdue(x)).length,top=a[0];
+  const V=[
+    `Current view holds <b>${a.length} tracked items</b> — <b>${crit} critical</b>, <b>${over} overdue</b>. Dominant exposure is <b>${top?top.title.toLowerCase():"—"}</b> (${top?top.owner:""}), not yet cleared. Recommend board attention on overdue items before next quarter.`,
+    `Residual exposure concentrates in <b>${top?top.unit:"—"}</b> and <b>${a.filter(x=>x.cat==="Regulatory").length} regulatory items</b>. <b>${over} actions</b> have slipped past target — a recurring control-timeliness theme worth flagging to management.`,
+    `Net position is <b>manageable but trending</b>: ${crit} critical, ${a.filter(x=>x.sev==="high").length} high open; ${a.filter(x=>x.status==="InProgress").length} in mitigation. Most likely to escalate: <b>${top?top.id:"—"}</b>, score ${top?top.score:""}.`,
+  ];
+  $("#aiSum").innerHTML=V[state.aiIdx%V.length];
+}
+$("#aiRegen").onclick=()=>{state.aiIdx++;renderAI();};
+$("#aiCopy").onclick=()=>{const t=$("#aiSum").innerText;navigator.clipboard&&navigator.clipboard.writeText(t);
+  $("#aiCopy").textContent="Copied ✓";setTimeout(()=>$("#aiCopy").textContent="Copy for board pack",1400);};
+
+function openDrawer(id){
+  const it=ITEMS.find(x=>x.id===id);if(!it)return;
+  $("#drType").innerHTML=`<span class="d d-${it.type}"></span>${it.type}`;
+  $("#drTitle").textContent=it.title;
+  $("#drSub").textContent=`${it.id} · ${it.unit} · owner ${it.owner}`;
+  $("#drStep").innerHTML=STAGES.map((s,i)=>{
+    const cls=i+1<it.stage?"done":i+1===it.stage?"cur":"";
+    return `<div class="stp ${cls}"><span class="p"></span><span class="n">${s}</span></div>`;
+  }).join("");
+  const od=overdue(it);
+  $("#drFields").innerHTML=[
+    ["Pillar",it.type],["Category",it.cat],
+    ["Score","mono",`${it.l} × ${it.i} = ${it.score} · ${sevLabel(it.sev)}`],
+    ["Status",it.status==="InProgress"?"In progress":it.status],["Owner",it.owner],
+    ["Target date","mono",`${new Date(it.due).toLocaleDateString("en-GB",{day:"2-digit",month:"short",year:"numeric"})}${od?" · overdue":""}`],
+    ["Controls / actions",it.controls],
+  ].map(f=>{const k=f[0],mono=f.length===3?"mono":"",v=f.length===3?f[2]:f[1];
+    return `<div class="fld"><span class="k">${k}</span><span class="v ${mono}" ${od&&k==="Target date"?'style="color:var(--crit)"':''}>${v}</span></div>`;}).join("");
+  $("#drAiText").value="";
+  $("#drAiBtn").onclick=()=>$("#drAiText").value=`${it.id} — ${it.title}. Owned by ${it.owner} (${it.unit}), this ${sevLabel(it.sev).toLowerCase()} ${it.type.toLowerCase()} carries a residual score of ${it.score}. Currently at the "${STAGES[it.stage-1]}" stage${od?", remediation past target date":""}. Existing response: ${it.controls}.`;
+  $("#drAiCat").onclick=()=>$("#drAiText").value=`Suggested: ${it.cat} → ${it.type}. Control family: ${it.cat==="Regulatory"||it.cat==="Compliance"?"Compliance & regulatory obligations":it.cat==="Financial"?"Financial reporting controls":"Operational / IT general controls"}. Confidence: high.`;
+  $("#drawer").classList.add("on");$("#drawer").setAttribute("aria-hidden","false");$("#scrim").classList.add("on");
+}
+const closeDrawer=()=>{$("#drawer").classList.remove("on");$("#drawer").setAttribute("aria-hidden","true");$("#scrim").classList.remove("on");};
+$("#drClose").onclick=closeDrawer;$("#scrim").onclick=closeDrawer;
+document.addEventListener("keydown",e=>{if(e.key==="Escape")closeDrawer();});
+
+document.querySelectorAll(".seg button").forEach(b=>b.onclick=()=>{
+  document.querySelectorAll(".seg button").forEach(x=>x.setAttribute("aria-pressed","false"));
+  b.setAttribute("aria-pressed","true");
+  state.role=b.dataset.role;state.type=ROLES[state.role].type;state.cell=null;state.aiIdx=0;render();
+});
+document.querySelectorAll(".pill[data-type]").forEach(b=>b.onclick=()=>{state.type=b.dataset.type;state.cell=null;render();});
+$("#search").oninput=e=>{state.search=e.target.value.trim();render();};
+render();
+</script>
+</body>
+</html>
