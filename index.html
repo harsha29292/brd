@@ -213,6 +213,95 @@
     .seg button{padding:7px 10px}
   }
   @media (prefers-reduced-motion:reduce){*{transition:none!important}}
+
+  /* ===== AI LAYER ===== */
+  :root{ --ai:#46E0C8; --ai-dim:#0C2B27; --ai-2:#7FF0DE; }
+  .spark{display:inline-block;color:var(--ai);filter:drop-shadow(0 0 5px rgba(70,224,200,.55))}
+  .ai-pill{display:inline-flex;align-items:center;gap:6px;border:1px solid rgba(70,224,200,.35);
+    background:var(--ai-dim);color:var(--ai-2);font-family:"JetBrains Mono",monospace;font-size:10px;
+    letter-spacing:.04em;padding:4px 9px;border-radius:999px}
+
+  /* Copilot bar */
+  .copilot{margin-bottom:22px;border:1px solid var(--line-2);border-radius:14px;background:
+    radial-gradient(600px 120px at 12% -40px, rgba(70,224,200,.07), transparent 70%), var(--bg-2);overflow:hidden}
+  .cp-bar{display:flex;align-items:center;gap:12px;padding:13px 16px}
+  .cp-bar .ico{flex:none;width:30px;height:30px;border-radius:9px;display:grid;place-items:center;
+    background:var(--ai-dim);border:1px solid rgba(70,224,200,.3);font-size:15px}
+  .cp-bar input{flex:1;background:transparent;border:0;outline:0;color:var(--text);font-family:inherit;
+    font-size:14.5px}
+  .cp-bar input::placeholder{color:var(--text-3)}
+  .cp-send{flex:none;border:1px solid var(--ai);background:var(--ai);color:#062019;font-weight:700;
+    font-size:12.5px;padding:8px 14px;border-radius:9px;display:inline-flex;align-items:center;gap:7px}
+  .cp-send:hover{background:var(--ai-2);border-color:var(--ai-2)}
+  .cp-tool{flex:none;border:1px solid var(--line-2);background:transparent;color:var(--ai-2);font-weight:600;
+    font-size:12px;padding:8px 12px;border-radius:9px;white-space:nowrap}
+  .cp-tool:hover{border-color:rgba(70,224,200,.5);background:var(--ai-dim)}
+  .cp-chips{display:flex;gap:8px;flex-wrap:wrap;padding:0 16px 14px}
+  .cp-chip{border:1px solid var(--line-2);background:var(--bg-3);color:var(--text-2);font-size:12px;
+    padding:6px 11px;border-radius:999px;transition:.14s}
+  .cp-chip:hover{border-color:rgba(70,224,200,.45);color:var(--text)}
+  .cp-panel{max-height:0;overflow:hidden;transition:max-height .3s ease;border-top:1px solid transparent}
+  .cp-panel.on{max-height:520px;overflow:auto;border-top:1px solid var(--line)}
+  .cp-thread{padding:16px}
+  .cp-msg{margin-bottom:16px}
+  .cp-q{display:flex;gap:10px;align-items:flex-start;margin-bottom:12px}
+  .cp-q .av{flex:none;width:24px;height:24px;border-radius:7px;background:var(--bg-hover);border:1px solid var(--line-2);
+    display:grid;place-items:center;font-size:11px;color:var(--text-2);font-family:"JetBrains Mono",monospace}
+  .cp-q .qt{font-weight:500;color:var(--text);padding-top:2px}
+  .cp-a{display:flex;gap:10px;align-items:flex-start}
+  .cp-a .av{flex:none;width:24px;height:24px;border-radius:7px;background:var(--ai-dim);border:1px solid rgba(70,224,200,.35);
+    display:grid;place-items:center;font-size:12px}
+  .cp-a .at{color:var(--text-2);line-height:1.6;font-size:13.5px}
+  .cp-a .at b{color:var(--text);font-weight:600}
+  .cite{display:inline-flex;align-items:center;gap:5px;font-family:"JetBrains Mono",monospace;font-size:10.5px;
+    color:var(--ai-2);border:1px solid rgba(70,224,200,.3);background:var(--ai-dim);border-radius:6px;
+    padding:2px 7px;margin:2px 4px 2px 0;cursor:default}
+  .cites{margin-top:11px;display:flex;flex-wrap:wrap;align-items:center;gap:2px}
+  .cites .lbl{font-size:10.5px;color:var(--text-3);font-family:"JetBrains Mono",monospace;margin-right:4px}
+  .cursor{display:inline-block;width:7px;height:14px;background:var(--ai);margin-left:1px;vertical-align:-2px;animation:bl 1s steps(2) infinite}
+  @keyframes bl{50%{opacity:0}}
+  .thinking{display:flex;align-items:center;gap:9px;color:var(--ai-2);font-size:13px}
+  .thinking .dots{display:inline-flex;gap:4px}
+  .thinking .dots i{width:5px;height:5px;border-radius:50%;background:var(--ai);animation:pulse 1.2s infinite}
+  .thinking .dots i:nth-child(2){animation-delay:.2s}.thinking .dots i:nth-child(3){animation-delay:.4s}
+  @keyframes pulse{0%,60%,100%{opacity:.25}30%{opacity:1}}
+
+  /* AI summary citations + marker */
+  .ai .ph h3 .spark{margin-right:6px}
+  .sum-cites{margin-top:12px}
+
+  /* Generator modal */
+  .gen-scrim{position:fixed;inset:0;background:rgba(0,0,0,.62);backdrop-filter:blur(3px);opacity:0;pointer-events:none;transition:.2s;z-index:50}
+  .gen-scrim.on{opacity:1;pointer-events:auto}
+  .gen{position:fixed;top:50%;left:50%;transform:translate(-50%,-46%) scale(.98);opacity:0;pointer-events:none;
+    width:min(620px,94vw);max-height:88vh;overflow:auto;background:var(--bg-2);border:1px solid var(--line-2);
+    border-radius:16px;z-index:51;transition:.22s;box-shadow:0 30px 80px -30px #000}
+  .gen.on{opacity:1;pointer-events:auto;transform:translate(-50%,-50%) scale(1)}
+  .gen .gh{padding:18px 20px;border-bottom:1px solid var(--line);display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
+  .gen .gh h2{margin:0;font-size:17px;font-weight:600;letter-spacing:-.01em;display:flex;align-items:center;gap:9px}
+  .gen .gh p{margin:5px 0 0;font-size:12px;color:var(--text-3)}
+  .gen .gh .x{border:0;background:transparent;color:var(--text-3);font-size:18px;padding:2px 7px;border-radius:7px}
+  .gen .gh .x:hover{background:var(--bg-3);color:var(--text)}
+  .gen .gb{padding:18px 20px}
+  .gen .frow{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:6px}
+  .gen label{font-size:12px;color:var(--text-2)}
+  .gen select{background:var(--bg-3);border:1px solid var(--line-2);color:var(--text);font-family:inherit;
+    font-size:13px;padding:9px 12px;border-radius:9px;outline:0}
+  .gen .out{margin-top:16px;min-height:40px}
+  .ob{border:1px solid var(--line);border-radius:11px;padding:13px 14px;margin-bottom:10px;background:var(--bg-3);
+    opacity:0;transform:translateY(6px);animation:rise .35s forwards}
+  @keyframes rise{to{opacity:1;transform:none}}
+  .ob .obt{font-weight:600;color:var(--text);font-size:13.5px;margin-bottom:4px}
+  .ob .obc{font-size:12.5px;color:var(--text-2);line-height:1.5}
+  .ob .obc b{color:var(--text)}
+  .ob .obf{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:9px}
+  .ob .addbtn{border:1px solid var(--ai);background:transparent;color:var(--ai-2);font-size:11.5px;font-weight:600;
+    padding:5px 11px;border-radius:7px}
+  .ob .addbtn:hover{background:var(--ai-dim)}
+  .ob .addbtn.done{border-color:var(--low);color:var(--low);background:var(--low-dim)}
+
+  /* drawer AI accent */
+  .dai .t b .spark{margin-right:5px}
 </style>
 </head>
 <body>
@@ -223,9 +312,10 @@
       <div class="mark" aria-hidden="true"></div>
       <div>
         <div class="nm">Aegis</div>
-        <div class="tag">FORMYX // GRC CONTROL SURFACE</div>
+        <div class="tag">FORMYX // AI-NATIVE INTERNAL AUDIT</div>
       </div>
     </div>
+    <span class="ai-pill"><span class="spark">✦</span> AI EMBEDDED</span>
     <div class="spacer"></div>
     <div class="seg" role="group" aria-label="Role">
       <button data-role="board" aria-pressed="true">Board</button>
@@ -249,6 +339,17 @@
     <span class="v2">Predictive AI · v2</span>
   </nav>
 
+  <section class="copilot">
+    <div class="cp-bar">
+      <div class="ico"><span class="spark">✦</span></div>
+      <input id="cpInput" type="text" placeholder="Ask Aegis anything about your risks, audits, controls or standards…" aria-label="Ask Aegis copilot">
+      <button class="cp-tool" id="genOpen"><span class="spark">✦</span> Generate compliance requirements</button>
+      <button class="cp-send" id="cpSend">Ask <span class="spark" style="color:#062019;filter:none">→</span></button>
+    </div>
+    <div class="cp-chips" id="cpChips"></div>
+    <div class="cp-panel" id="cpPanel"><div class="cp-thread" id="cpThread"></div></div>
+  </section>
+
   <section class="tele" id="tele" aria-label="Indicators"></section>
 
   <div class="row">
@@ -266,9 +367,10 @@
       </div>
     </div>
     <div class="panel ai">
-      <div class="ph"><h3>AI exposure summary</h3><span class="badge">V1 · DRAFTING</span></div>
+      <div class="ph"><h3><span class="spark">✦</span>AI exposure summary</h3><span class="ai-pill">GROUNDED · CITED</span></div>
       <div class="pb">
         <p class="sum" id="aiSum"></p>
+        <div class="cites sum-cites" id="aiCites"></div>
         <div class="acts">
           <button class="btn pri" id="aiRegen">
             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12a9 9 0 1 1 3 6.7"/><path d="M3 21v-6h6"/></svg>Regenerate
@@ -277,7 +379,7 @@
         </div>
         <div class="disc">
           <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#5E5E66" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8h.01M11 12h1v4h1"/></svg>
-          Drafted from live register data — review before circulating.
+          Drafted from live register data — every claim traces to a source.
         </div>
       </div>
     </div>
@@ -301,8 +403,38 @@
   </section>
 
   <div class="foot">
-    <span>FormyX // Aegis — <b>v1 scope prototype</b></span>
+    <span>FormyX // Aegis — <b>AI-native prototype</b></span>
     <span>Lifecycle: <b>Capture → Assess → Assign → Remediate → Review → Close</b></span>
+  </div>
+</div>
+
+<div class="gen-scrim" id="genScrim"></div>
+<div class="gen" id="genModal" aria-hidden="true">
+  <div class="gh">
+    <div>
+      <h2><span class="spark">✦</span> Compliance requirement generator</h2>
+      <p>Pick a business profile — Aegis retrieves applicable obligations and drafts suggested controls, each cited to its source.</p>
+    </div>
+    <button class="x" id="genClose" aria-label="Close">✕</button>
+  </div>
+  <div class="gb">
+    <div class="frow">
+      <label for="genInd">Industry</label>
+      <select id="genInd">
+        <option value="fintech">Fintech / Payments</option>
+        <option value="banking">Banking</option>
+        <option value="insurance">Insurance</option>
+        <option value="healthcare">Healthcare</option>
+      </select>
+      <label for="genReg">Jurisdiction</label>
+      <select id="genReg">
+        <option value="gcc">GCC</option>
+        <option value="eu">EU</option>
+        <option value="global">Global</option>
+      </select>
+      <button class="cp-send" id="genRun" style="margin-left:auto">Generate</button>
+    </div>
+    <div class="out" id="genOut"></div>
   </div>
 </div>
 
@@ -317,13 +449,16 @@
     <div class="step" id="drStep"></div>
     <div id="drFields"></div>
     <div class="dai">
-      <div class="t"><b>AI assist</b></div>
-      <textarea id="drAiText" placeholder="Draft a board-ready summary of this item…" readonly></textarea>
-      <div class="acts" style="margin-top:11px">
+      <div class="t"><b><span class="spark">✦</span>AI assist</b><span class="ai-pill">EMBEDDED</span></div>
+      <textarea id="drAiText" placeholder="AI is woven into this record — draft a summary, classify it, suggest controls, or find similar items…" readonly></textarea>
+      <div class="cites" id="drAiCites"></div>
+      <div class="acts" style="margin-top:11px;flex-wrap:wrap">
         <button class="btn pri" id="drAiBtn">Draft summary</button>
         <button class="btn" id="drAiCat">Suggest category</button>
+        <button class="btn" id="drAiCtrl">Suggest controls</button>
+        <button class="btn" id="drAiSim">Find similar</button>
       </div>
-      <div class="nt">v1 AI = drafting &amp; classification (no historical data needed). Predictive analytics ships in v2.</div>
+      <div class="nt">Intelligent inputs at every touchpoint — AI is part of the core design, not a bolt-on. Each suggestion is grounded and cited.</div>
     </div>
   </div>
 </aside>
@@ -450,6 +585,9 @@ function renderAI(){
     `Net position is <b>manageable but trending</b>: ${crit} critical, ${a.filter(x=>x.sev==="high").length} high open; ${a.filter(x=>x.status==="InProgress").length} in mitigation. Most likely to escalate: <b>${top?top.id:"—"}</b>, score ${top?top.score:""}.`,
   ];
   $("#aiSum").innerHTML=V[state.aiIdx%V.length];
+  const src=a.slice(0,3).map(x=>x.id);
+  if(over>0) src.push("IIA Std 2500");
+  $("#aiCites").innerHTML=`<span class="lbl">SOURCES</span>`+src.map(s=>`<span class="cite">◇ ${s}</span>`).join("");
 }
 $("#aiRegen").onclick=()=>{state.aiIdx++;renderAI();};
 $("#aiCopy").onclick=()=>{const t=$("#aiSum").innerText;navigator.clipboard&&navigator.clipboard.writeText(t);
@@ -473,9 +611,16 @@ function openDrawer(id){
     ["Controls / actions",it.controls],
   ].map(f=>{const k=f[0],mono=f.length===3?"mono":"",v=f.length===3?f[2]:f[1];
     return `<div class="fld"><span class="k">${k}</span><span class="v ${mono}" ${od&&k==="Target date"?'style="color:var(--crit)"':''}>${v}</span></div>`;}).join("");
-  $("#drAiText").value="";
-  $("#drAiBtn").onclick=()=>$("#drAiText").value=`${it.id} — ${it.title}. Owned by ${it.owner} (${it.unit}), this ${sevLabel(it.sev).toLowerCase()} ${it.type.toLowerCase()} carries a residual score of ${it.score}. Currently at the "${STAGES[it.stage-1]}" stage${od?", remediation past target date":""}. Existing response: ${it.controls}.`;
-  $("#drAiCat").onclick=()=>$("#drAiText").value=`Suggested: ${it.cat} → ${it.type}. Control family: ${it.cat==="Regulatory"||it.cat==="Compliance"?"Compliance & regulatory obligations":it.cat==="Financial"?"Financial reporting controls":"Operational / IT general controls"}. Confidence: high.`;
+  $("#drAiText").value="";$("#drAiCites").innerHTML="";
+  const setCites=arr=>{$("#drAiCites").innerHTML=arr.length?`<span class="lbl" style="font-size:10.5px;color:var(--text-3);font-family:'JetBrains Mono',monospace;margin-right:4px">SOURCES</span>`+arr.map(s=>`<span class="cite">◇ ${s}</span>`).join(""):"";};
+  $("#drAiBtn").onclick=()=>{streamTo($("#drAiText"),`${it.id} — ${it.title}. Owned by ${it.owner} (${it.unit}), this ${sevLabel(it.sev).toLowerCase()} ${it.type.toLowerCase()} carries a residual score of ${it.score}. Currently at the "${STAGES[it.stage-1]}" stage${od?", remediation past target date":""}. Existing response: ${it.controls}.`);setCites([it.id,"IIA Std 2410"]);};
+  $("#drAiCat").onclick=()=>{streamTo($("#drAiText"),`Suggested classification: ${it.cat} → ${it.type}. Control family: ${it.cat==="Regulatory"||it.cat==="Compliance"?"Compliance & regulatory obligations":it.cat==="Financial"?"Financial reporting controls":"Operational / IT general controls"}. Confidence: high.`);setCites([it.id,"Taxonomy v1"]);};
+  $("#drAiCtrl").onclick=()=>{
+    const map={Operational:["Access recertification (quarterly)","Segregation-of-duties matrix","Activity logging + review"],Financial:["Independent reconciliation review","Maker-checker on journals","CFO sign-off threshold"],Regulatory:["Obligation-to-control mapping","Periodic attestation","Regulator filing register"],Compliance:["Control library mapping","Evidence retention policy","Annual control walkthrough"],Strategic:["Board risk appetite review","Scenario stress testing","Resilience roadmap"]}[it.cat]||["Preventive control","Detective control","Corrective control"];
+    streamTo($("#drAiText"),`Recommended controls for ${it.id}:\n• ${map.join("\n• ")}`);setCites(["ISO 27001 A.5","Control Library","IIA Std 2130"]);};
+  $("#drAiSim").onclick=()=>{
+    const sim=ITEMS.filter(x=>x.id!==it.id&&(x.cat===it.cat||x.unit===it.unit)).slice(0,2);
+    streamTo($("#drAiText"),sim.length?`Similar items detected (possible duplication or shared root cause):\n• ${sim.map(s=>`${s.id} — ${s.title} (${Math.round(70+Math.random()*22)}% match)`).join("\n• ")}`:"No closely related items found in the current register.");setCites(sim.map(s=>s.id));};
   $("#drawer").classList.add("on");$("#drawer").setAttribute("aria-hidden","false");$("#scrim").classList.add("on");
 }
 const closeDrawer=()=>{$("#drawer").classList.remove("on");$("#drawer").setAttribute("aria-hidden","true");$("#scrim").classList.remove("on");};
@@ -489,6 +634,87 @@ document.querySelectorAll(".seg button").forEach(b=>b.onclick=()=>{
 });
 document.querySelectorAll(".pill[data-type]").forEach(b=>b.onclick=()=>{state.type=b.dataset.type;state.cell=null;render();});
 $("#search").oninput=e=>{state.search=e.target.value.trim();render();};
+
+/* ===== AI LAYER ===== */
+function streamTo(el,text){
+  el.value="";let i=0;clearInterval(el._t);
+  el._t=setInterval(()=>{el.value=text.slice(0,i++);el.scrollTop=el.scrollHeight;if(i>text.length)clearInterval(el._t);},9);
+}
+function typeHTML(el,html,cb){
+  const tmp=html.split(/(<[^>]+>)/).filter(Boolean);
+  let chunk=0,ch=0,buf="";
+  const tick=()=>{
+    if(chunk>=tmp.length){el.innerHTML=buf;cb&&cb();return;}
+    const part=tmp[chunk];
+    if(part.startsWith("<")){buf+=part;chunk++;el.innerHTML=buf+'<span class="cursor"></span>';setTimeout(tick,2);}
+    else{buf+=part[ch++];el.innerHTML=buf+'<span class="cursor"></span>';if(ch>=part.length){chunk++;ch=0;}setTimeout(tick,10);}
+  };tick();
+}
+const CP_CHIPS=["Summarize open critical risks","Which findings are overdue?","What does IIA require for audit follow-up?","Draft a board summary for the Audit Committee"];
+function cpAnswer(q){
+  const a=ITEMS.filter(x=>x.status!=="Closed");
+  const crit=a.filter(x=>x.sev==="crit"), over=a.filter(x=>overdue(x)), ql=q.toLowerCase();
+  if(ql.includes("overdue"))
+    return {t:`<b>${over.length} items are overdue.</b> The most material are ${over.slice(0,3).map(x=>`<b>${x.id}</b> (${x.title.toLowerCase()}, owner ${x.owner})`).join("; ")}. All have passed their agreed target date and should move to escalation under the follow-up process.`,c:[...over.slice(0,3).map(x=>x.id),"IIA Std 2500"]};
+  if(ql.includes("critical")||ql.includes("risk"))
+    return {t:`There are <b>${crit.length} critical exposures</b> open. Highest are <b>${crit[0]?crit[0].id:"—"}</b> — ${crit[0]?crit[0].title.toLowerCase():""} (score ${crit[0]?crit[0].score:""}, ${crit[0]?crit[0].owner:""}) and <b>${crit[1]?crit[1].id:"—"}</b> — ${crit[1]?crit[1].title.toLowerCase():""}. Both sit above appetite and need board-level attention this quarter.`,c:[...crit.slice(0,2).map(x=>x.id),"ISO 31000 §6.4"]};
+  if(ql.includes("iia")||ql.includes("follow")||ql.includes("standard"))
+    return {t:`Under the <b>IIA Global Internal Audit Standards</b>, the CAE must establish a follow-up process to confirm management actions are implemented or that senior management has accepted the risk. In Aegis this maps to the <b>Follow-up Repository</b> with quarterly cycles until each agreed action is closed.`,c:["IIA Std 2500","IIA Std 2600","Follow-up Repository"]};
+  if(ql.includes("board")||ql.includes("summary")||ql.includes("committee"))
+    return {t:`<b>Audit Committee summary —</b> ${a.length} open items across risk, audit and compliance; <b>${crit.length} critical</b>, <b>${over.length} overdue</b>. Audit plan ~72% complete. Recommended focus: overdue remediation in ${over[0]?over[0].unit:"Finance"} and unmapped controls under ${(a.find(x=>x.cat==="Compliance")||{}).id||"compliance"}.`,c:[...a.slice(0,2).map(x=>x.id),"IIA Std 2410"]};
+  if(ql.includes("compliance")||ql.includes("requirement")||ql.includes("generate"))
+    return {t:`I can generate applicable obligations from a business profile — open the <b>Compliance requirement generator</b> and pick an industry and jurisdiction. Each obligation comes with a suggested control and a citation you can push straight into the register.`,c:["Generator","Obligations KB"]};
+  return {t:`Across the current register there are <b>${a.length} open items</b>, <b>${crit.length} critical</b> and <b>${over.length} overdue</b>. Ask me about overdue actions, critical risks, a specific ID, what a standard requires, or to draft a board summary.`,c:[...a.slice(0,2).map(x=>x.id)]};
+}
+function cpAsk(q){
+  if(!q.trim())return;
+  $("#cpPanel").classList.add("on");
+  const thread=$("#cpThread"), msg=document.createElement("div");msg.className="cp-msg";
+  msg.innerHTML=`<div class="cp-q"><span class="av">You</span><span class="qt"></span></div><div class="cp-a"><span class="av spark">✦</span><div class="at"><div class="thinking">Aegis is retrieving from your data <span class="dots"><i></i><i></i><i></i></span></div></div></div>`;
+  thread.appendChild(msg);msg.querySelector(".qt").textContent=q;thread.scrollTop=thread.scrollHeight;
+  const ans=cpAnswer(q);
+  setTimeout(()=>{
+    const at=msg.querySelector(".at");at.innerHTML="";
+    typeHTML(at,ans.t,()=>{
+      const cd=document.createElement("div");cd.className="cites";
+      cd.innerHTML=`<span class="lbl">SOURCES</span>`+ans.c.map(s=>`<span class="cite">◇ ${s}</span>`).join("");
+      at.appendChild(cd);thread.scrollTop=thread.scrollHeight;
+    });
+    thread.scrollTop=thread.scrollHeight;
+  },650);
+}
+function initCopilot(){
+  $("#cpChips").innerHTML=CP_CHIPS.map(c=>`<button class="cp-chip">${c}</button>`).join("");
+  $("#cpChips").querySelectorAll(".cp-chip").forEach(b=>b.onclick=()=>cpAsk(b.textContent));
+  $("#cpSend").onclick=()=>{cpAsk($("#cpInput").value);$("#cpInput").value="";};
+  $("#cpInput").addEventListener("keydown",e=>{if(e.key==="Enter"){cpAsk($("#cpInput").value);$("#cpInput").value="";}});
+}
+const GEN={
+ fintech:[["AML / CFT transaction monitoring","Real-time screening and risk-based alert triage for suspicious transactions.","FATF Rec. 10–11","Automated alert triage + escalation matrix"],["Customer due diligence (KYC)","Identity verification and ongoing due diligence on all account holders.","FATF Rec. 10","Tiered KYC workflow with periodic refresh"],["Data protection & consent","Lawful basis and consent records for personal data processing.","GDPR Art. 6 / local DPL","Consent register + retention schedule"],["Information security (ISMS)","Documented ISMS and Annex A controls.","ISO 27001 A.5","ISMS policy set + control mapping"],["Outsourcing governance","Register and oversight of material outsourcing.","Regulator outsourcing guidance","Outsourcing register + filing"]],
+ banking:[["Capital adequacy reporting","Periodic regulatory capital and liquidity reporting.","Basel III","Automated regulatory return pack"],["Credit risk governance","Board-approved credit policy and exposure limits.","Basel III / ICAAP","Limit framework + exception log"],["AML / sanctions screening","Sanctions and PEP screening across customers and payments.","FATF Rec. 6","Screening engine + case management"],["Operational resilience","Impact tolerances for important business services.","Regulator resilience rules","Resilience roadmap + scenario tests"]],
+ insurance:[["Solvency & capital","Risk-based capital adequacy and own-risk assessment.","Solvency II / RBC","ORSA process + capital model"],["Conduct & fair treatment","Fair treatment of policyholders across the lifecycle.","Conduct rules","Product governance + complaints MI"],["Reserving adequacy","Actuarial reserving review and sign-off.","Actuarial standards","Independent reserving review"]],
+ healthcare:[["Patient data privacy","Protection of personal health information.","HIPAA / local health-data law","Access controls + audit logging"],["Clinical governance","Oversight of clinical quality and safety.","Accreditation standards","Incident reporting + review board"],["Consent management","Documented patient consent for treatment and data use.","Health-data regulation","Consent capture workflow"]],
+};
+function genRun(){
+  const ind=$("#genInd").value, out=$("#genOut"), list=GEN[ind]||GEN.fintech;
+  out.innerHTML=`<div class="thinking" style="padding:8px 2px">Generating applicable requirements <span class="dots"><i></i><i></i><i></i></span></div>`;
+  setTimeout(()=>{
+    out.innerHTML="";
+    list.forEach((o,idx)=>{
+      const card=document.createElement("div");card.className="ob";card.style.animationDelay=(idx*0.09)+"s";
+      card.innerHTML=`<div class="obt">${o[0]}</div><div class="obc">${o[1]} <b>Suggested control:</b> ${o[3]}.</div><div class="obf"><span class="cite">◇ ${o[2]}</span><button class="addbtn">＋ Add to register</button></div>`;
+      out.appendChild(card);
+      card.querySelector(".addbtn").onclick=function(){this.textContent="✓ Added";this.classList.add("done");this.disabled=true;};
+    });
+  },700);
+}
+function openGen(){$("#genModal").classList.add("on");$("#genModal").setAttribute("aria-hidden","false");$("#genScrim").classList.add("on");if(!$("#genOut").innerHTML.trim())genRun();}
+function closeGen(){$("#genModal").classList.remove("on");$("#genModal").setAttribute("aria-hidden","true");$("#genScrim").classList.remove("on");}
+$("#genOpen").onclick=openGen;$("#genClose").onclick=closeGen;$("#genScrim").onclick=closeGen;$("#genRun").onclick=genRun;
+$("#genInd").onchange=genRun;$("#genReg").onchange=genRun;
+document.addEventListener("keydown",e=>{if(e.key==="Escape")closeGen();});
+
+initCopilot();
 render();
 </script>
 </body>
